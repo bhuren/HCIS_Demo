@@ -1,0 +1,48 @@
+# Installing kubernetes primitives
+# Assuming 'apt'/'ubuntu'
+
+- hosts: k8s_A
+  become: yes
+  tasks:  
+   - name: install APT Transport HTTPS
+     apt:
+       name: 
+       - apt-transport-https
+       - ca-certificates
+       - curl
+       state: present
+
+   - name: add Kubernetes apt-key
+     apt_key:
+       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+       state: present
+
+   - name: add Kubernetes' APT repository
+     apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: 'kubernetes.list'
+
+   - name: install kubelet
+     apt:
+       name: kubelet
+       state: present
+       update_cache: true
+
+   - name: install kubeadm
+     apt:
+       name: kubeadm
+       state: present
+
+   - name: install kubectl
+     apt:
+       name: kubectl
+       state: present
+       force: yes
+     when: inventory_hostname in groups['masters']
+
+   - name: adding kubcectl shortcuts and completion
+     ansible.builtin.lineinfile:
+       path: ~/.bashrc
+       line: "source <(kubectl completion bash)\nalias k=kubectl\ncomplete -F __start_kubectl k"
+     when: inventory_hostname in groups['masters']

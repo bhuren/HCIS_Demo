@@ -1,0 +1,12 @@
+---
+- hosts: workers
+  become: yes
+  tasks:  
+  - name: Copy join command to workers
+    copy: 
+      src: /tmp/{{ master_hostname }}/tmp/k8s_join_command
+      dest: /root/k8s_join_command
+      mode: 0777
+
+  - name: Initialize the cluster
+    command: sh /root/k8s_join_command

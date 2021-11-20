@@ -1,0 +1,8 @@
+- hosts: masters
+  become: yes
+  gather_facts: false
+  tasks: 
+   - name: Deploying Daemonset for Node Exporter
+     shell: kubectl create -f /monitoring_manifests/kubernetes-node-exporter/daemonset.yaml
+   - name: Setup Node-exporter Service endpoint
+     shell: kubectl create -f /monitoring_manifests/kubernetes-node-exporter/service.yaml

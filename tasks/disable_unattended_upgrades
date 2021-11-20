@@ -1,0 +1,8 @@
+- hosts: k8s_A
+  become: yes
+  gather_facts: false
+  tasks: 
+   - name: Replacing config file /etc/apt/apt.conf.d/20auto-upgrades with new version
+     copy: 
+       src: ../files/20auto-upgrades
+       dest: /etc/apt/apt.conf.d/20auto-upgrades

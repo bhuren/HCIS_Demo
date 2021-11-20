@@ -1,0 +1,10 @@
+- hosts: masters
+  become: yes
+  gather_facts: false
+  tasks: 
+   - name: Creating config-map for grafana
+     shell: kubectl create -f /monitoring_manifests/kubernetes-grafana/grafana-datasource-config.yaml
+   - name: Deploy grafana
+     shell: kubectl create -f /monitoring_manifests/kubernetes-grafana/deployment.yaml
+   - name: Setup Grafana service endpoint
+     shell: kubectl create -f /monitoring_manifests/kubernetes-grafana/service.yaml

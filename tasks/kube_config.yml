@@ -1,0 +1,11 @@
+# Installing kubernetes primitives
+# Assuming 'apt'/'ubuntu'
+
+- hosts: k8s_A
+  become: yes
+  tasks:  
+  - name: Download Kubernetes cluster images
+    command: kubeadm config images pull
+
+
+

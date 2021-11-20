@@ -1,0 +1,12 @@
+- name: Applying CNI workaround
+  import_playbook: tasks/workaround_for_CNI_virtualbox.yml
+- name: Installing Prometheus & Kube-State-Metrics
+  import_playbook: tasks/prometheus_kube_state_metrics.yml
+- name: deploying AlertManager
+  import_playbook: tasks/alert-manager.yml
+- name: Deploying Grafana
+  import_playbook: tasks/grafana_setup.yml
+- name: Installing Prometheus Node-exporter
+  import_playbook: tasks/node_exporter.yml
+- name: Integrating Node Problem detector
+  import_playbook: tasks/node_problem_detector.yml

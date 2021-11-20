@@ -1,0 +1,43 @@
+# Installing kubernetes primitives
+# Assuming 'yum'/'centos'
+
+- hosts: k8s
+  become: yes
+  tasks:  
+  - name: creating kube repo
+    copy: 
+     dest: "/etc/yum.repos.d/kubernetes.repo"
+     content: |
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  - name: Setting selinux to permissive
+    selinux:
+      policy: targeted
+      state: permissive
+  - name: Disabling SElinux during persistently
+    ansible.builtin.shell: sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+  - name: installing Kubernetes packages
+    yum:
+      name:
+      - kubeadm
+      - kubelet
+      state: present
+  -  yum:
+      name:
+      - kubectl
+      state: present
+     when: inventory_hostname in groups['masters']
+  - name: Disabling firewall and enabling kubelet
+    ansible.builtin.service:
+      name: kubelet
+      state: started
+      enabled: yes
+  - ansible.builtin.service:
+      name: firewalld
+      state: stopped
+      enabled: no

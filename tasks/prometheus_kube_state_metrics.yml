@@ -1,0 +1,24 @@
+# Installing prometheus
+# Installing kube-state-metrics
+
+- hosts: masters
+  become: yes
+  gather_facts: false
+  tasks: 
+   - name: Copying Kubernetes Manifests
+     synchronize: 
+       src: ../files/monitoring_manifests
+       dest: /
+   - name: Creating a namespace:monitoring for the monitoring stack
+     shell: kubectl create namespace monitoring
+     ignore_errors: yes
+   - name: Creating cluster roles for prometheus and associated bindings
+     shell: kubectl create -f /monitoring_manifests/kubernetes-prometheus/clusterRole.yaml
+   - name: Creating config-maps with prometheus configuration
+     shell: kubectl create -f /monitoring_manifests/kubernetes-prometheus/config-map.yaml
+   - name: Creating Prometheus Deployment
+     shell: kubectl create  -f /monitoring_manifests/kubernetes-prometheus/prometheus-deployment.yaml 
+   - name: Install kube-state-metrics
+     shell: kubectl create -f /monitoring_manifests/kube-state-metrics-configs/
+   - name: Settings up a node-port service for Prometheus
+     shell: kubectl create -f /monitoring_manifests/kubernetes-prometheus/prometheus-service.yaml --namespace=monitoring

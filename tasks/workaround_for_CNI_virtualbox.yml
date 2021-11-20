@@ -1,0 +1,14 @@
+---
+- hosts: workers
+  become: yes
+  gather_facts: false
+  tasks:  
+  - name: Pausing a minute for CNI plugins to get active on all nodes
+    pause:
+      seconds: 60
+  - name: CNI workaround
+    shell: iptables -t nat -I KUBE-SERVICES -d 10.96.0.1/32 -p tcp -m comment --comment "default/kubernetes:https cluster IP" -m tcp --dport 443 -j KUBE-MARK-MASQ
+  - name: Pausing a minute after applying the workaround
+    pause:
+      seconds: 60
+

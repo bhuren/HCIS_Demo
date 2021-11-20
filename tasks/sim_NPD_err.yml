@@ -1,0 +1,7 @@
+---
+- hosts: k2
+  become: yes
+  gather_facts: false
+  tasks:  
+  - name: Simulating Node-Problem-Detector error by echoing errors in 'kmsg'
+    ansible.builtin.script: ../files/simulate-NPD-Error.sh 

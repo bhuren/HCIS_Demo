@@ -1,0 +1,10 @@
+- hosts: masters
+  become: yes
+  gather_facts: false
+  tasks: 
+   - name: Downloading CNI Manifest
+     synchronize: 
+       src: ../files/CNI
+       dest: /
+   - name: Installing CNI
+     shell: kubectl create -f /CNI/weave_net.yaml

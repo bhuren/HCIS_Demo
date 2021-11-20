@@ -1,0 +1,15 @@
+- hosts: k8s_A
+- name: Disable Unattended Upgrades 
+  import_playbook: tasks/disable_unattended_upgrades
+- name: Installing docker
+  import_playbook: tasks/install_docker.yml
+- name: Installing Kubernetes
+  import_playbook: tasks/kube_apt.yml
+- name: Downloading Kube Cluster images
+  import_playbook: tasks/kube_config.yml
+- name: Initializing the cluster on master node
+  import_playbook: tasks/kube_cluster_init.yml
+- name: Joining the worker nodes to cluster
+  import_playbook: tasks/kube_cluster_join.yml
+- name: Deploying the Monitoring stack
+  import_playbook: monitoring.yml

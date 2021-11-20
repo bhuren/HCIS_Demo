@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: node-problem-detector
+  namespace: kube-system
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '20257'
+spec:
+  selector:
+    app: node-problem-detector
+  ports:
+  - name: node-problem-detector
+    protocol: TCP
+    port: 9000
+    targetPort: 20257

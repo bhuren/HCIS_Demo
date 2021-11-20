@@ -1,0 +1,44 @@
+---
+- hosts: masters
+  become: yes
+  vars:
+  tasks:  
+  - name: Create kubeadm cluster
+    command: kubeadm init --apiserver-advertise-address "{{  addr }}" --upload-certs #--pod-network-cidr=10.244.0.0/16
+    when: inventory_hostname in groups['masters']
+
+  - name: capture join command
+    command: kubeadm token create --print-join-command
+    register: k8s_join_command
+
+  - name: Copy join command to local file.
+    copy: content="{{ k8s_join_command.stdout_lines[0] }}" dest="/tmp/k8s_join_command" mode=0777
+
+  - name: Fetch join command content to control machine
+    fetch:
+      src: /tmp/k8s_join_command
+      dest: /tmp/
+  
+  - file: 
+      path: /root/.kube/
+      state: directory
+    name: Creating KUBE CONFIG Dir
+
+  - name: Fetch kubectl admin conf
+    fetch: 
+      src: /etc/kubernetes/admin.conf
+      dest: /tmp/
+
+  - name: Copy the file to KUBE CONFIG file to masters
+    copy: 
+      src: /tmp/{{ master_hostname }}/etc/kubernetes/admin.conf
+      dest: /root/.kube/config
+      
+  - name: Applying networking 1
+    shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    #shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+
+
+
+ 

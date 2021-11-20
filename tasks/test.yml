@@ -1,0 +1,7 @@
+- hosts: k0
+  become: yes
+  tasks:  
+     - name: adding kubcectl shortcuts and completion
+       ansible.builtin.lineinfile:
+         path: ~/.bashrc
+         line: "source <(kubectl completion bash)\nalias k=kubectl\ncomplete -F __start_kubectl k"

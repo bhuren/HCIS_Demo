@@ -1,0 +1,28 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  config.yml: |-
+    templates:
+    - '/etc/alertmanager/*.tmpl'
+    global:
+      resolve_timeout: 1m
+      slack_api_url: 'https://hooks.slack.com/services/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'
+    receivers:
+    - name: "slack"
+      slack_configs:
+      - channel: '#kube-project'
+        send_resolved: true
+    route:
+      group_by:
+      - job
+      group_interval: 2m
+      group_wait: 30s
+      receiver: "slack"
+      repeat_interval: 1h
+      routes:
+      - match:
+          severity: Critical
+        receiver: "slack"

@@ -1,0 +1,12 @@
+- hosts: masters
+  become: yes
+  gather_facts: false
+  tasks: 
+   - name: Creating config-map for alert-manager
+     shell: kubectl create -f /monitoring_manifests/kubernetes-alert-manager/AlertManagerConfigmap.yaml
+   - name: Creating config-map for alert-templates
+     shell: kubectl create -f /monitoring_manifests/kubernetes-alert-manager/AlertTemplateConfigMap.yaml
+   - name: Deploying Alert Manager
+     shell: kubectl create -f /monitoring_manifests/kubernetes-alert-manager/Deployment.yaml
+   - name: Creating Alert Manager Service Endpoint
+     shell: kubectl create -f /monitoring_manifests/kubernetes-alert-manager/Service.yaml
